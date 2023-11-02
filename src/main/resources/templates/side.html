@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>サイドバー</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+</head>
+
+<body> <!-- min-vh-100を追加 -->
+  <div th:fragment="sidebar" class="min-vh-100 mb-3 d-flex align-items-start flex-column mb-3">
+    <div class="mx-3 my-4">
+      <div class="border-bottom">
+        <div class="mt-2 mb-3">
+            <a class="h3 text-decoration-none">メニュー</a>
+        </div>
+      </div>
+    </div>
+    <div class="my-4">
+      <ul>
+		   <li class="d-flex">
+          <i class="far fa-user mt-1"></i>
+          <a class="h6 text-decoration-none" th:href="@{/home}">
+            <p>ホーム</p>
+          </a>
+        </li>
+        <li class="d-flex">
+          <i class="far fa-user mt-1"></i>
+          <a class="h6 text-decoration-none" th:href="@{/aisatu}">
+            <p>塾長挨拶</p>
+          </a>
+        </li>
+        <li class="d-flex">
+          <i class="fas fa-search mt-1"></i>
+          <a class="h6 text-decoration-none" th:href="@{/yotei}">
+            <p>講義・イベント予定表</p>
+          </a>
+        </li>
+        <li class="d-flex">
+          <i class="fas fa-search mt-1"></i>
+          <a class="h6 text-decoration-none" th:href="@{/sisetu}">
+            <p>施設案内・MAP</p>
+          </a>
+        </li>
+        <li class="d-flex">
+          <i class="far fa-user mt-1"></i>
+          <a class="h6 text-decoration-none" th:href="@{/otoiawase}">
+            <p>お問い合わせ</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="mt-auto mx-4 my-4 text-center">
+      <div>
+       
+      </div>
+      
+      
+    </form>
+    </div>
+  </div>
+</div>
+</body>
+
+</html>

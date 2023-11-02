@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" th:replace="~{screen :: main(~{::title}, ~{::body/content()})}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カレンダー画面</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="mx-3 my-4">
+        <div class="border-bottom  d-flex justify-content-between">
+            <p class="h3" id="header">予定一覧</p>
+            <div class="col-md-4 d-flex justify-content-end">
+                
+            </div>
+        </div>
+        <div class="mt-3">
+            <p class="h4" id="title"></p>
+        </div>
+        <div class="ms-3 my-4 row wide-text">
+            <div class="col-2 d-flex align-items-end">
+                <div id="next-prev-button">
+                    <button id="prev" onclick="prev()">‹</button>
+                    <button id="next" onclick="next()">›</button>
+                </div>
+            </div>
+            <div class="col-4">
+                <p>クリックすると詳細ページに遷移します。また、青色の日付＝土曜日　赤色の日付＝日曜日  休日等については直接カレンダーに記載しています</p>
+            </div>
+            <div class="col-6">
+                <form  method="get">
+                    <input type="search" name="keyword" style="width: 250px">
+                    <input type="submit" value="検索">
+                </form>
+            </div>
+        </div>
+        <div class="row mx-3 my-4">
+            <div id="calendar"></div>
+        </div>
+    </div>
+    <style>
+        .wide-text {
+            letter-spacing: 0.2em;
+        }
+
+        /*日曜日*/
+        td:first-child {
+            color: red;
+        }
+
+        /*土曜日*/
+        td:last-child {
+            color: blue;
+        }
+
+        /*前後月の日付*/
+        td.disabled {
+            color: #ccc;
+        }
+
+        /*本日*/
+        td.today {
+            background-color: #D65E72;
+            color: #fff;
+        }
+
+        td {
+            width: 100px;
+            /* あるいは他の適切な値に設定 */
+            max-width: 100px;
+            /* tdの最大幅を制限 */
+            overflow: hidden;
+            /* コンテンツがはみ出た時に非表示にする */
+            text-overflow: ellipsis;
+            /* はみ出たテキストを...で省略 */
+            white-space: nowrap;
+            /* 改行を無効にする */
+            box-sizing: border-box;
+            /* パディングとボーダーが幅に含まれるようにする */
+        }
+
+        a {
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+    <script type="text/javascript">
+        const week = ["日", "月", "火", "水", "木", "金", "土"];
+        const today = new Date();
+        // 月末だとずれる可能性があるため、1日固定で取得
+        var showDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        // 初期表示
+        window.onload = function () {
+            showProcess(today, calendar);
+        };
+        // 前の月表示
+        function prev() {
+            showDate.setMonth(showDate.getMonth() - 1);
+            showProcess(showDate);
+        }
+
+        // 次の月表示
+        function next() {
+            showDate.setMonth(showDate.getMonth() + 1);
+            showProcess(showDate);
+        }
+
+        // カレンダー表示
+        async function showProcess(date) {
+            const apiEndpoint = "/api/data/recipeList";
+            const data = await fetch(apiEndpoint).then(response => response.json());
+            
+            var year = date.getFullYear();
+            var month = date.getMonth();
+            document.querySelector("#title").innerHTML = year + "年 " + (month + 1) + "月";
+            
+
+            var calendar = createProcess(data, year, month);
+            document.querySelector('#calendar').innerHTML = calendar;
+        }
+
+        // カレンダー作成
+        function createProcess(data, year, month) {
+            // 曜日
+            var calendar = "<table class='table table-bordered table-secondary'><tr class='dayOfWeek'>";
+            for (var i = 0; i < week.length; i++) {
+                calendar += "<th class='text-center'>" + week[i] + "</th>";
+            }
+            calendar += "</tr>";
+
+            var count = 0;
+            var startDayOfWeek = new Date(year, month, 1).getDay();
+            var endDate = new Date(year, month + 1, 0).getDate();
+            var lastMonthEndDate = new Date(year, month, 0).getDate();
+            var row = Math.ceil((startDayOfWeek + endDate) / week.length);
+            
+
+            // 1行ずつ設定
+            for (var i = 0; i < row; i++) {
+                calendar += "<tr style='height: 150px;'>";
+                // 1colum単位で設定
+                for (var j = 0; j < week.length; j++) {
+                    if (i == 0 && j < startDayOfWeek) {
+                        // 1行目で1日まで先月の日付を設定
+                        calendar += "<td class='disabled'>" + (lastMonthEndDate - startDayOfWeek + j + 1) + "</td>";
+                    } else if (count >= endDate) {
+                        // 最終行で最終日以降、翌月の日付を設定
+                        count++;
+                        calendar += "<td class='disabled'>" + (count - endDate) + "</td>";
+                    } else {
+                        // 当月の日付を曜日に照らし合わせて設定
+                        count++;
+                        if (year == today.getFullYear()
+                            && month == (today.getMonth())
+                            && count == today.getDate()) {
+                            calendar += "<td class='today'>" + count + createLink(data, today.getFullYear(), today.getMonth(), today.getDate()) + "</td>";
+                        } else {
+                            calendar += "<td>" + count + createLink(data, year, month, count) + "</td>";
+                        }
+                    }
+                }
+                calendar += "</tr>";
+            }
+            return calendar;
+        }
+
+        function createLink(data, year, month, day) {
+            let links = '';
+            for (let key in data) {
+                for (let childKey in data[key]) {
+                    if (year + '-' + (month + 1).toString().padStart(2,'0') + '-' + day.toString().padStart(2,'0') == data[key][childKey]) {
+                        links += '<div>' + `<a href="/recipe/infomation/${key}" class="text-decoration-none">${childKey}</a>` + '</div>';
+                    }
+                }
+            }
+            return links || '<a> </a>';
+        }
+
+    </script>
+</body>
+
+</html>

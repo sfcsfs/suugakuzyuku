@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:replace="~{screen :: main(~{::title}, ~{::body/content()})}">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ホーム画面</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+</head>
+
+<body>
+
+
+
+
+	<div class="mx-3 my-4">
+		<div class="border-bottom">
+			<p class="h2">
+				<TEXTAREA ROWS=1 COLS=33
+					style="border:thick ridge #800000;background-color:#006a00;color:#ffffff;font-family:富士ポップ;"
+					readonly>
+      当塾のホームページへようこそ！                      一緒に数学を学んでいきましょう！
+      </TEXTAREA>
+			</p>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col m-2">
+				<div class="border border-0 bg-body-secondary p-0">
+					<a class="h6 ms-0"></a>
+					<div class="contaider">
+						<div class="row">
+							<img th:src="@{/images/topimage.jpg}" class="col m-0 mg-fluid"
+								style="max-width:1300px; max-height:300px;" /> <!--ここで画像差し替えできる-->
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<h2><TEXTAREA ROWS=1 COLS=18
+					style="border:thick ridge #800000;background-color:#006a00;color:#ffffff;font-family:富士ポップ;"
+					readonly>     当塾について</TEXTAREA></h2>
+			
+			<div style="color:#333;background: radial-gradient(#a57745, #e4bd92) center center/2px 2px repeat #be9567;margin:1em 5px;padding:1em;border:8px solid #a60;border-radius:3px;box-shadow:2px 2px 4px #999,2px 2px 2px #845a2c inset;">
+			<p>当サイトにアクセスいただきありがとうございます。当塾は算数・数学を専門とする～</p>
+			<p>きめ細かいサポートを～</p>
+			<p>経験豊富な講師が～</p>
+			<p>今ならキャンペーン期間につき～</p>
+			<p>こちらはX(旧twitter)のアカウントで～</p>
+			<p>講義の一部もサイトで無料公開していてリンクは～</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col m-2">
+				<p class="h2">
+					<TEXTAREA ROWS=1 COLS=18
+						style="border:thick ridge #800000;background-color:#006a00;color:#ffffff;font-family:富士ポップ;"
+						readonly>
+      コース紹介
+      </TEXTAREA>
+				</p>
+				<div class="row">
+					<div class="col-auto">
+						<button class="btn" id="calorieButton">中学受験コース</button>
+					</div>
+					<div class="col-auto">
+						<button class="btn" id="proteinButton">高校受験コース</button>
+					</div>
+					<div class="col-auto">
+						<button class="btn" id="fatButton">大学受験コース</button>
+					</div>
+					<div class="col-auto">
+						<button class="btn" id="carbohydrateButton">無料体験コース</button>
+					</div>
+				</div>
+				<div class="my-4">
+					<table class="table table-sm">
+						<thead class="table-light">
+							<tr class="text-center">
+								<th>コース番号</th>
+								<th>概要</th>
+								<th id="changenumber">対象</th>
+							</tr>
+						</thead>
+						<tbody id="rankingData">
+							<tr>
+								<td>
+									<div id="c2">
+									　上記コース名を選択
+										<!--									うまくc2がしゅとくできていない-->
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col m-4 border rounded-5">
+				<div class="d-flex align-items-center justify-content-center m-3">
+					<a class="me-5" href="#" id="prev">⇦</a>
+					<p class="m-0" id="month-year">10月</p>
+					<a class="ms-5" href="#" id="next">⇨</a>
+				</div>
+				<div class="table-responsive overflow-y-scroll" style="max-height: 600px;">
+					<table class="table table-sm" id="data-table2"><!-- <tbody id="data-table">とid被っていたので変更 -->
+						<thead class="table-light">
+							<tr class="text-center">
+								<th>日付</th>
+								<th>講義内容と時刻(簡易版)</th>
+								<th style="width: 40%;">講師</th>
+							</tr>
+						</thead>
+
+						<tbody id="data-table">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	</script>
+	<style>
+		#rankingData td {
+			text-align: center;
+			vertical-align: middle;
+		}
+	</style>
+
+
+
+	</script>
+	<style>
+		#rankingData td {
+			text-align: center;
+			vertical-align: middle;
+		}
+	</style>
+
+
+	<script type="text/javascript">
+		let num = 7;
+		// ボタン要素を取得
+		const energyButton = document.getElementById("calorieButton");
+		const proteinButton = document.getElementById("proteinButton");
+		const fatButton = document.getElementById("fatButton");
+		const carbButton = document.getElementById("carbohydrateButton");
+		// すべてのボタンのクリックイベントを共通の関数で処理
+		function handleButtonClick(button, data) {
+			console.log(data);
+			// すべてのボタンの背景色をリセット
+			resetButtonColors();
+			// クリックされたボタンの背景色を変更
+			button.className = 'btn btn-primary';
+			// データを取得
+			//fetchData(data);
+
+			//num設定
+			if (data === "1") {
+				num = "1";
+			}
+			if (data === "2") {
+				num = "2";
+			}
+			if (data === "3") {
+				num = "3";
+			}
+			if (data === "4") {
+				num = "4";
+			}
+
+			displayDataInTable(data, num);
+
+		}
+
+
+		// ボタンがクリックされたときの処理を設定
+		energyButton.addEventListener("click", function () {
+			handleButtonClick(energyButton, "1")
+		});
+		proteinButton.addEventListener("click", function () {
+			handleButtonClick(proteinButton, "2");
+		});
+		fatButton.addEventListener("click", function () {
+			handleButtonClick(fatButton, "3");
+		});
+		carbButton.addEventListener("click", function () {
+			handleButtonClick(carbButton, "4");
+		});
+		// すべてのボタンの背景色をリセットする関数
+		function resetButtonColors() {
+			energyButton.className = 'btn';
+			proteinButton.className = 'btn';
+			fatButton.className = 'btn';
+			carbButton.className = 'btn';
+		}
+
+		function displayDataInTable(data, num) {
+			// テーブルのtbody要素を取得
+			const tableBody = document.querySelector('table tbody');
+			// テーブル内の既存の行をクリア
+			tableBody.innerHTML = '';
+			// データをテーブルに表示
+
+			const row = document.createElement('tr');
+
+
+
+
+
+
+
+
+
+
+			const rankCell = document.createElement('td');
+
+
+
+			const nameCell = document.createElement('td');
+			const link = document.createElement('a');
+			link.textContent = "www";
+
+			nameCell.appendChild(link);
+			const valueCell = document.createElement('td');
+			const valueContainer = document.createElement('div');
+			valueContainer.classList.add('d-flex', 'align-items-center', 'justify-content-center');
+			valueContainer.innerHTML = `<p>dddd</p>`;
+			valueCell.appendChild(valueContainer);
+
+			row.appendChild(rankCell);
+			row.appendChild(nameCell);
+			row.appendChild(valueCell);
+			tableBody.appendChild(row);
+			console.log(num);
+			if (num === "1") {
+				rankCell.textContent = "1";
+				link.textContent = "レベルの高い算数";
+				valueContainer.textContent = "小学生";
+			}
+			if (num === "2") {
+				rankCell.textContent = "2";
+				link.textContent = "高度な数学";
+				valueContainer.textContent = "中学生";
+			}
+			if (num === "3") {
+				rankCell.textContent = "3";
+				link.textContent = "超高等な数学";
+				valueContainer.textContent = "高校生";
+			}
+			if (num === "4") {
+				rankCell.textContent = "4";
+				link.textContent = "それなり";
+				valueContainer.textContent = "フリー";
+			}
+
+
+		}
+	</script>
+
+
+
+
+
+
+
+
+
+	<script type="text/javascript">
+		document.addEventListener("DOMContentLoaded", function () {
+			const monthYear = document.getElementById("month-year");
+			const dataTable = document.getElementById("data-table");
+			const prevButton = document.getElementById("prev");
+			const nextButton = document.getElementById("next");
+			let currentDate = new Date(); // 初期値は現在の日付
+			function getData(date, bodyFat, weight) {
+				const apiEndpoint = 'サーバーサイドのAPIエンドポイント'
+				fetch(apiEndpoint)
+					.then(function (response) {
+						if (!response.ok) {
+							throw new Error('データの取得に失敗しました');
+						}
+						return response.json();
+					})
+					.then(function (data) {
+						generateTable(data);
+					})
+					.catch(function (error) {
+						console.error(error);
+					});
+			}
+			function generateTable(data) {
+				const year = currentDate.getFullYear();
+				const month = currentDate.getMonth();
+				const daysInMonth = new Date(year, month + 1, 0).getDate(); // 月の日数を取得
+				monthYear.textContent = `${year}年${month + 1}月`; // 年月の表示を更新
+				// テーブル内のデータをクリア
+				dataTable.innerHTML = "";
+				// 日付データを生成
+				for (let day = 1; day <= daysInMonth; day++) {
+					const row = document.createElement("tr");
+					row.classList.add("text-center");
+					const dateCell = document.createElement("td");
+					dateCell.textContent = `${day}日`;
+					const bodyFatCell = document.createElement("td");
+					// 体重データをここで設定
+					const weightCell = document.createElement("td");
+					// input要素（number）を生成
+					const inputNumber = document.createElement("input");
+					inputNumber.type = "number";
+					inputNumber.classList.add("me-1");
+					inputNumber.style.width = "25%";
+					inputNumber.style.height = "80%";
+					// 日付に対応するデータを取得
+					//const dateData = data.find(item => item.date === `${year}-${month + 1}-${day}`);
+					//if (dateData) {
+					//bodyFatCell.textContent = dateData.bodyFat;
+					// weightデータをinputNumberのvalueにセット
+					//inputNumber.value = dateData.weight;
+					//} else {
+					// データが存在しない場合の処理を追加
+					//bodyFatCell.textContent = "";
+					//inputNumber.value = "";
+					//}
+					// p要素を生成
+					const paragraph = document.createElement("p");
+					paragraph.classList.add("m-0");
+					paragraph.textContent = "先生";
+					// input要素（submit）を生成
+					//const inputSubmit = document.createElement("input");
+					//inputSubmit.type = "submit";
+					//inputSubmit.classList.add("ms-3");
+					//inputSubmit.style.height = "80%";
+					//inputSubmit.value = "更新";
+					// div要素を生成して、inputNumber、paragraph、inputSubmitを追加
+					const div = document.createElement("div");
+					div.classList.add("d-flex", "justify-content-center");
+					div.appendChild(inputNumber);
+					div.appendChild(paragraph);
+					//div.appendChild(inputSubmit);
+					// div要素をweightCellの子要素に追加
+					weightCell.appendChild(div);
+					row.appendChild(dateCell);
+					row.appendChild(bodyFatCell);
+					row.appendChild(weightCell);
+					dataTable.appendChild(row);
+				}
+			}
+			// 前の月に移動するボタンの処理
+			prevButton.addEventListener("click", function () {
+				currentDate.setMonth(currentDate.getMonth() - 1);
+				generateTable();
+			});
+			// 次の月に移動するボタンの処理
+			nextButton.addEventListener("click", function () {
+				currentDate.setMonth(currentDate.getMonth() + 1);
+				generateTable();
+			});
+			// ページ読み込み時にテーブルを生成
+			generateTable();
+		});
+	</script>
+
+
+</body>
+
+</html>
